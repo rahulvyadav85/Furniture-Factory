@@ -1,40 +1,65 @@
 package hackerrank;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public interface FurnitureOrderInterface {
-
+public class FurnitureOrder implements FurnitureOrderInterface {
     /**
-     * @param type The type of Furniture being added to the order.
-     * @param count The number of units of Furniture type 'type' to add to the order.
+     * TODO: Create a map of Furniture items to order quantities
      */
-    public void addToOrder(final Furniture type, final int count);
-
+	private HashMap<Furniture, Integer> furnitureMap = null; 
     /**
-     * @return All the ordered furniture as a mapping of Furniture types to Integer quantities.
+     * Initialize a new mapping of Furniture types to order quantities.
      */
-    public HashMap<Furniture, Integer> getOrderedFurniture();
+    FurnitureOrder() {
+    	furnitureMap = new HashMap<>();
+    }
 
-    /**
-     * @param type The type of Furniture
-     * @return The total number of units of Furniture 'type' in the order.
-     */
-    public int getTypeCount(Furniture type);
+    public void addToOrder(final Furniture type, final int furnitureCount) {
+    	if (furnitureMap.containsKey(type)) {
+    		int prevCount = furnitureMap.get(type);
+    		furnitureMap.put(type, prevCount + furnitureCount);
+    	} else {
+    		furnitureMap.put(type, furnitureCount);
+    	}
+    }
 
-    /**
-     *
-     * @param type The type of Furniture being ordered
-     * @return The total cost of just the Furniture units of 'type' in the order.
-     */
-    public float getTypeCost(Furniture type);
+    public HashMap<Furniture, Integer> getOrderedFurniture() {
+        return furnitureMap;
+    }
 
-    /**
-     * @return The total cost of the order.
-     */
-    public float getTotalOrderCost();
+    public float getTotalOrderCost() {
+    	float totalCost = 0f;
+        for (Map.Entry<Furniture, Integer> entry : furnitureMap.entrySet()) {
+        	if (Furniture.CHAIR.equals(entry.getKey())) {
+        		totalCost = totalCost + (Furniture.CHAIR.cost() * entry.getValue());
+        	} else if (Furniture.TABLE.equals(entry.getKey())) {
+        		totalCost = totalCost + (Furniture.TABLE.cost() * entry.getValue());
+        	} else {
+        		totalCost = totalCost + (Furniture.COUCH.cost() * entry.getValue());
+        	}
+        }
+        return totalCost;
+    }
 
-	/**
-	 * @return The total number of all types of Furniture units in the order.
-	 */
-    public int getTotalOrderQuantity();
+    public int getTypeCount(Furniture type) {
+       return furnitureMap.get(type);
+    }
+
+    public float getTypeCost(Furniture type) {
+        for (Furniture f : Furniture.values()) {
+        	if (f == type) {
+        		return f.cost();
+        	}
+        }
+        return 0f;
+    }
+
+    public int getTotalOrderQuantity() {
+    	int totalQuantity = 0;
+        for (Map.Entry<Furniture, Integer> entry : furnitureMap.entrySet()) {
+        	totalQuantity = totalQuantity + entry.getValue(); 
+        }
+        return totalQuantity;
+    }
 }
